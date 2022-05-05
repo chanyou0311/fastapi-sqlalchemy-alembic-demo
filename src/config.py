@@ -1,6 +1,8 @@
-from typing import Literal
+from typing import Literal, Type
 
 from pydantic import BaseSettings
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 
 class Settings(BaseSettings):
@@ -13,3 +15,6 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+engine = create_engine(settings.database_url)
+SessionLocal: Type[Session] = sessionmaker(engine)

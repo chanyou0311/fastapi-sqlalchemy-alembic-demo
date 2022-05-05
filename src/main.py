@@ -1,16 +1,12 @@
-from typing import Type
 from fastapi import Depends, FastAPI
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from pydantic import UUID4
 
 from .applications import ProjectApplication
-from .config import settings
-from .models import ProjectCreateSchema, ProjectSchema
+from .config import SessionLocal
+from .models import ProjectSchema
 from .repositories import ProjectRepository
 
 app = FastAPI()
-engine = create_engine(settings.database_url)
-SessionLocal: Type[Session] = sessionmaker(engine)
 
 
 def get_project_repo():
@@ -19,7 +15,7 @@ def get_project_repo():
 
 
 def get_project_app(repo: ProjectRepository = Depends(get_project_repo)):
-    return ProjectApplication(repo)
+    return ProjectApplication()
 
 
 @app.get("/")
@@ -28,12 +24,12 @@ async def root():
 
 
 @app.get("/projects/{id}", response_model=ProjectSchema)
-async def get_project(id: int, app: ProjectApplication = Depends(get_project_app)):
+async def get_project(id: UUID4, app: ProjectApplication = Depends(get_project_app)):
     return app.get_project(id)
 
 
 @app.post("/projects", response_model=ProjectSchema)
 async def create_project(
-    project: ProjectCreateSchema, app: ProjectApplication = Depends(get_project_app)
+    project: ProjectSchema, app: ProjectApplication = Depends(get_project_app)
 ):
     return app.create_project(project)

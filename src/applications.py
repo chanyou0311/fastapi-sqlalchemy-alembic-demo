@@ -1,17 +1,30 @@
-from .models import ProjectCreateSchema, ProjectSchema
+from typing import Callable
+
+from pydantic import UUID4
+
+from .config import SessionLocal
+from .models import ProjectSchema
 from .repositories import ProjectRepository
 
 
-class ProjectApplication:
-    def __init__(self, repo: ProjectRepository) -> None:
-        self.repo = repo
+def transaction(func):
+    def wrapper(self, *args, **kwargs):
+        with self.session.begin():
+            return func(self, *args, **kwargs)
 
-    def get_project(self, project_id: int) -> ProjectSchema:
+    return wrapper
+
+
+class ProjectApplication:
+    def __init__(self) -> None:
+        self.session = SessionLocal()
+        self.repo = ProjectRepository(self.session)
+
+    @transaction
+    def get_project(self, project_id: UUID4) -> ProjectSchema:
         return self.repo.get_project(project_id)
 
-    def create_project(self, project: ProjectCreateSchema) -> ProjectSchema:
-        # TODO: implement transaction processing
-        with self.repo.session.begin():
-            project = self.repo.create_project(project)
-        return ProjectSchema.from_orm(project)
-        # return project
+    @transaction
+    def create_project(self, project: ProjectSchema) -> ProjectSchema:
+        project = self.repo.create_project(project)
+        return project
