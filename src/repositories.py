@@ -10,11 +10,11 @@ class ProjectRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def get_project(self, project_id: uuid.UUID) -> models.ProjectSchema:
-        statement: Select = select(models.Project).filter_by(id=project_id)
+    def get_project(self, project_id: uuid.UUID) -> models.Project:
+        statement: Select = select(models.ProjectORM).filter_by(id=str(project_id))
         project_orm = self.session.execute(statement).scalar_one()
-        return models.ProjectSchema.from_orm(project_orm)
+        return models.Project.from_orm(project_orm)
 
-    def create_project(self, project: models.ProjectSchema) -> models.ProjectSchema:
+    def create_project(self, project: models.Project) -> models.Project:
         self.session.add(project.to_orm())
         return project

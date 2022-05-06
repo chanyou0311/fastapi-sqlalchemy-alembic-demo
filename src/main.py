@@ -4,7 +4,7 @@ from fastapi import Depends, FastAPI
 
 from .applications import ProjectApplication
 from .config import SessionLocal
-from .models import ProjectSchema
+from .models import Project
 from .repositories import ProjectRepository
 
 app = FastAPI()
@@ -24,15 +24,15 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/projects/{id}", response_model=ProjectSchema)
+@app.get("/projects/{id}", response_model=Project)
 async def get_project(
     id: uuid.UUID, app: ProjectApplication = Depends(get_project_app)
 ):
     return app.get_project(id)
 
 
-@app.post("/projects", response_model=ProjectSchema)
+@app.post("/projects", response_model=Project)
 async def create_project(
-    project: ProjectSchema, app: ProjectApplication = Depends(get_project_app)
+    project: Project, app: ProjectApplication = Depends(get_project_app)
 ):
     return app.create_project(project)

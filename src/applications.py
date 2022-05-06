@@ -1,7 +1,7 @@
 import uuid
 
 from .config import SessionLocal
-from .models import ProjectSchema
+from .models import Project
 from .repositories import ProjectRepository
 
 
@@ -19,10 +19,10 @@ class ProjectApplication:
         self.repo = ProjectRepository(self.session)
 
     @transaction
-    def get_project(self, project_id: uuid.UUID) -> ProjectSchema:
+    def get_project(self, project_id: uuid.UUID) -> Project:
         return self.repo.get_project(project_id)
 
     @transaction
-    def create_project(self, project: ProjectSchema) -> ProjectSchema:
+    def create_project(self, project: Project) -> Project:
         project = self.repo.create_project(project)
         return project
