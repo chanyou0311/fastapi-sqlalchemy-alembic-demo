@@ -1,6 +1,4 @@
-from typing import Callable
-
-from pydantic import UUID4
+import uuid
 
 from .config import SessionLocal
 from .models import ProjectSchema
@@ -21,7 +19,7 @@ class ProjectApplication:
         self.repo = ProjectRepository(self.session)
 
     @transaction
-    def get_project(self, project_id: UUID4) -> ProjectSchema:
+    def get_project(self, project_id: uuid.UUID) -> ProjectSchema:
         return self.repo.get_project(project_id)
 
     @transaction

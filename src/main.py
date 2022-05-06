@@ -1,5 +1,6 @@
+import uuid
+
 from fastapi import Depends, FastAPI
-from pydantic import UUID4
 
 from .applications import ProjectApplication
 from .config import SessionLocal
@@ -24,7 +25,9 @@ async def root():
 
 
 @app.get("/projects/{id}", response_model=ProjectSchema)
-async def get_project(id: UUID4, app: ProjectApplication = Depends(get_project_app)):
+async def get_project(
+    id: uuid.UUID, app: ProjectApplication = Depends(get_project_app)
+):
     return app.get_project(id)
 
 
