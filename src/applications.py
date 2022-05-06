@@ -26,3 +26,9 @@ class ProjectApplication:
     def create_project(self, project: Project) -> Project:
         project = self.repo.create_project(project)
         return project
+
+    @transaction
+    def create_project_without_pydantic(self, name: str, description: str) -> Project:
+        project = Project.create_without_pydantic(name, description)
+        project = self.repo.create_project(project)
+        return project

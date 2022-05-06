@@ -60,6 +60,10 @@ class Project(CustomBaseModel):
         orm_mode = True
         orm_model = ProjectORM
 
+    @classmethod
+    def create_without_pydantic(cls, name: str, description: str) -> "Project":
+        return cls(name=name, description=description)
+
 
 class Task(CustomBaseModel):
     id: UUID4 = Field(default_factory=uuid.uuid4)

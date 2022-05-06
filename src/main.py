@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import Depends, FastAPI
+from fastapi import Body, Depends, FastAPI
 
 from .applications import ProjectApplication
 from .config import SessionLocal
@@ -36,3 +36,12 @@ async def create_project(
     project: Project, app: ProjectApplication = Depends(get_project_app)
 ):
     return app.create_project(project)
+
+
+@app.post("/projects/without-pydantic", response_model=Project)
+async def create_project_without_pydantic(
+    name: str = Body(...),
+    description: str = Body(""),
+    app: ProjectApplication = Depends(get_project_app),
+):
+    return app.create_project_without_pydantic(name, description)
