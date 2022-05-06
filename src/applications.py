@@ -1,7 +1,7 @@
 import uuid
 
 from .config import SessionLocal
-from .models import Project
+from .models import Project, ProjectCreate
 from .repositories import ProjectRepository
 
 
@@ -30,5 +30,11 @@ class ProjectApplication:
     @transaction
     def create_project_without_pydantic(self, name: str, description: str) -> Project:
         project = Project.create_without_pydantic(name, description)
+        project = self.repo.create_project(project)
+        return project
+
+    @transaction
+    def create_project_with_create_model(self, project: ProjectCreate) -> Project:
+        project = Project.create_with_create_model(project)
         project = self.repo.create_project(project)
         return project

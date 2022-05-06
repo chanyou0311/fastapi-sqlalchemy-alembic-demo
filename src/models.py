@@ -1,8 +1,8 @@
 from abc import ABC
 import json
-from typing import ForwardRef
+from typing import ForwardRef, Optional
 import uuid
-from pydantic import UUID4, BaseModel, Field
+from pydantic import UUID4, BaseModel, ConfigError, Field
 from sqlalchemy.orm import registry, relationship
 from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
 
@@ -13,10 +13,15 @@ Base = mapper_registry.generate_base()
 
 class CustomBaseModel(BaseModel, ABC):
     class Config:
-        orm_mode = True
-        orm_model: Base
+        orm_mode: bool = False
+        orm_model: Optional[Base] = None
 
     def to_orm(self):
+        config = self.Config()
+        if config.orm_mode is False or config.orm_model is None:
+            raise ConfigError(
+                "You must have the config attribute orm_mode=True to use to_orm"
+            )
         data = dict(self)
         for key, value in data.items():
             if type(value) == uuid.UUID:
@@ -28,7 +33,6 @@ class CustomBaseModel(BaseModel, ABC):
                     v.to_orm() for v in value if isinstance(v, CustomBaseModel)
                 ]
 
-        config = self.Config()
         return config.orm_model(**data)
 
 
@@ -50,10 +54,17 @@ class TaskORM(Base):
     project = relationship("ProjectORM", back_populates="tasks")
 
 
-class Project(CustomBaseModel):
-    id: UUID4 = Field(default_factory=uuid.uuid4)
+class ProjectBase(CustomBaseModel):
     name: str
     description: str = ""
+
+
+class ProjectCreate(ProjectBase):
+    pass
+
+
+class Project(ProjectBase):
+    id: UUID4 = Field(default_factory=uuid.uuid4)
     tasks: list[ForwardRef("Task")] = []
 
     class Config:
@@ -63,6 +74,10 @@ class Project(CustomBaseModel):
     @classmethod
     def create_without_pydantic(cls, name: str, description: str) -> "Project":
         return cls(name=name, description=description)
+
+    @classmethod
+    def create_with_create_model(cls, project: "ProjectCreate") -> "Project":
+        return cls.parse_obj(project)
 
 
 class Task(CustomBaseModel):

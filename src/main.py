@@ -4,7 +4,7 @@ from fastapi import Body, Depends, FastAPI
 
 from .applications import ProjectApplication
 from .config import SessionLocal
-from .models import Project
+from .models import Project, ProjectCreate
 from .repositories import ProjectRepository
 
 app = FastAPI()
@@ -45,3 +45,10 @@ async def create_project_without_pydantic(
     app: ProjectApplication = Depends(get_project_app),
 ):
     return app.create_project_without_pydantic(name, description)
+
+
+@app.post("/projects/with-create-model", response_model=Project)
+async def create_project_with_create_model(
+    project: ProjectCreate, app: ProjectApplication = Depends(get_project_app)
+):
+    return app.create_project_with_create_model(project)
