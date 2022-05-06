@@ -1,3 +1,5 @@
+from abc import ABC
+import json
 from typing import ForwardRef
 import uuid
 from pydantic import UUID4, BaseModel, Field
@@ -7,6 +9,25 @@ from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
 
 mapper_registry = registry()
 Base = mapper_registry.generate_base()
+
+
+class BaseSchema(BaseModel, ABC):
+    class Config:
+        orm_mode = True
+        orm_model: Base
+
+    def to_orm(self):
+        data = dict(self)
+        for key, value in data.items():
+            if type(value) == uuid.UUID:
+                data[key] = str(value)
+            elif isinstance(value, BaseSchema):
+                data[key] = value.to_orm()
+            elif isinstance(value, list):
+                data[key] = [v.to_orm() for v in value if isinstance(v, BaseSchema)]
+
+        config = self.Config()
+        return config.orm_model(**data)
 
 
 class Project(Base):
@@ -27,7 +48,7 @@ class Task(Base):
     project = relationship("Project", back_populates="tasks")
 
 
-class ProjectSchema(BaseModel):
+class ProjectSchema(BaseSchema):
     id: UUID4 = Field(default_factory=uuid.uuid4)
     name: str
     description: str = ""
@@ -35,17 +56,10 @@ class ProjectSchema(BaseModel):
 
     class Config:
         orm_mode = True
-
-    def to_orm(self):
-        return Project(
-            id=str(self.id),
-            name=self.name,
-            description=self.description,
-            tasks=[task.to_orm() for task in self.tasks],
-        )
+        orm_model = Project
 
 
-class TaskSchema(BaseModel):
+class TaskSchema(BaseSchema):
     id: UUID4 = Field(default_factory=uuid.uuid4)
     name: str
     is_completed: bool = False
@@ -53,6 +67,7 @@ class TaskSchema(BaseModel):
 
     class Config:
         orm_mode = True
+        orm_model = Task
 
     def to_orm(self):
         return Task(
