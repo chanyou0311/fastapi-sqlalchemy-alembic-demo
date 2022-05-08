@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, delete
 from sqlalchemy.sql import Select
 
-from .models.project import Project, ProjectOrm
+from ..models.project import Project, ProjectOrm
 
 
 class ProjectRepository:

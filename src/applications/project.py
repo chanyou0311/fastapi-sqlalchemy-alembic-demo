@@ -2,7 +2,7 @@ import uuid
 
 from ..config import SessionLocal
 from ..models.project import Project, CreateProjectDto
-from ..repositories import ProjectRepository
+from ..repositories.project import ProjectRepository
 from .base import transaction
 
 
