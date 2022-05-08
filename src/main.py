@@ -21,7 +21,7 @@ async def health():
 
 @app.get("/projects", response_model=list[Project])
 async def get_projects(app: ProjectApplication = Depends(get_project_app)):
-    return app.get_projects()
+    return app.get_list()
 
 
 @app.get("/projects/{id}", response_model=Project)
@@ -29,7 +29,7 @@ async def get_project(
     id: uuid.UUID,
     app: ProjectApplication = Depends(get_project_app),
 ):
-    return app.get_project(id)
+    return app.get_one(id)
 
 
 @app.post("/projects", response_model=Project)
@@ -37,4 +37,4 @@ async def create_project(
     dto: CreateProjectDto,
     app: ProjectApplication = Depends(get_project_app),
 ):
-    return app.create_project(dto)
+    return app.create(dto)
