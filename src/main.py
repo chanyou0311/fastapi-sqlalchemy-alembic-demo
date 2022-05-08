@@ -10,12 +10,7 @@ from .repositories import ProjectRepository
 app = FastAPI()
 
 
-def get_project_repo():
-    session = SessionLocal()
-    return ProjectRepository(session)
-
-
-def get_project_app(repo: ProjectRepository = Depends(get_project_repo)):
+def get_project_app():
     return ProjectApplication()
 
 
