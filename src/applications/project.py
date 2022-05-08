@@ -22,7 +22,7 @@ class ProjectApplication:
     @transaction
     def create(self, dto: CreateProjectDto) -> Project:
         project = Project.create(dto)
-        project = self.repo.create(project)
+        self.repo.create(project)
         return project
 
     @transaction

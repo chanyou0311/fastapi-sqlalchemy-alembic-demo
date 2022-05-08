@@ -21,9 +21,8 @@ class TaskRepository:
         task_orm = self.session.execute(statement).scalar_one()
         return Task.from_orm(task_orm)
 
-    def create(self, task: Task) -> Task:
+    def create(self, task: Task) -> None:
         self.session.add(task.to_orm())
-        return task
 
     def delete(self, task_id: uuid.UUID) -> None:
         statement: Select = delete(TaskOrm).filter_by(id=str(task_id))

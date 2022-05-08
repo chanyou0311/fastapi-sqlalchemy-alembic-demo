@@ -1,7 +1,8 @@
+import json
 import uuid
 from sqlalchemy.orm import Session
-from sqlalchemy import select, delete
-from sqlalchemy.sql import Select
+from sqlalchemy import select, delete, update
+from sqlalchemy.sql import Select, Update
 
 from ..models.project import Project, ProjectOrm
 
@@ -20,10 +21,17 @@ class ProjectRepository:
         project_orm = self.session.execute(statement).scalar_one()
         return Project.from_orm(project_orm)
 
-    def create(self, project: Project) -> Project:
+    def create(self, project: Project) -> None:
         self.session.add(project.to_orm())
         return project
 
     def delete(self, project_id: uuid.UUID) -> None:
         statement: Select = delete(ProjectOrm).filter_by(id=str(project_id))
+        self.session.execute(statement)
+
+    def update(self, project: Project) -> None:
+        params: dict = json.loads(project.json())
+        statement: Update = (
+            update(ProjectOrm).filter_by(id=str(project.id)).values(**params)
+        )
         self.session.execute(statement)

@@ -22,7 +22,7 @@ class TaskApplication:
     @transaction
     def create(self, dto: CreateTaskDto) -> Task:
         task = Task.create(dto)
-        task = self.repo.create(task)
+        self.repo.create(task)
         return task
 
     @transaction
