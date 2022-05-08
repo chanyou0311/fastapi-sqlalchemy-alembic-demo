@@ -32,3 +32,7 @@ class ProjectApplication:
         project = Project.create(dto)
         project = self.repo.create(project)
         return project
+
+    @transaction
+    def delete(self, project_id: uuid.UUID) -> Project:
+        return self.repo.delete(project_id)

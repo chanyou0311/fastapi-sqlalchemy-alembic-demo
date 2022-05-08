@@ -1,10 +1,11 @@
 import uuid
 
-from fastapi import Body, Depends, FastAPI
+from fastapi import Body, Depends, FastAPI, Response, status
+
 
 from .applications import ProjectApplication
 from .config import SessionLocal
-from .models.project import Project, CreateProjectDto
+from .models.project import CreateProjectDto, Project
 from .repositories import ProjectRepository
 
 app = FastAPI()
@@ -32,9 +33,17 @@ async def get_project(
     return app.get_one(id)
 
 
-@app.post("/projects", response_model=Project)
+@app.post("/projects", response_model=Project, status_code=status.HTTP_201_CREATED)
 async def create_project(
     dto: CreateProjectDto,
     app: ProjectApplication = Depends(get_project_app),
 ):
     return app.create(dto)
+
+
+@app.delete("/projects/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_project(
+    id: uuid.UUID,
+    app: ProjectApplication = Depends(get_project_app),
+):
+    app.delete(id)

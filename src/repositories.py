@@ -1,6 +1,6 @@
 import uuid
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.sql import Select
 
 from .models.project import Project, ProjectOrm
@@ -23,3 +23,7 @@ class ProjectRepository:
     def create(self, project: Project) -> Project:
         self.session.add(project.to_orm())
         return project
+
+    def delete(self, project_id: uuid.UUID) -> None:
+        statement: Select = delete(ProjectOrm).filter_by(id=str(project_id))
+        self.session.execute(statement)
