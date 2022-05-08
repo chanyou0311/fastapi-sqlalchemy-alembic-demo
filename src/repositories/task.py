@@ -1,7 +1,8 @@
+import json
 import uuid
 from sqlalchemy.orm import Session
-from sqlalchemy import select, delete
-from sqlalchemy.sql import Select
+from sqlalchemy import select, delete, update
+from sqlalchemy.sql import Select, Update
 
 from ..models.task import Task, TaskOrm
 
@@ -26,4 +27,9 @@ class TaskRepository:
 
     def delete(self, task_id: uuid.UUID) -> None:
         statement: Select = delete(TaskOrm).filter_by(id=str(task_id))
+        self.session.execute(statement)
+
+    def update(self, task: Task) -> None:
+        params: dict = json.loads(task.json())
+        statement: Update = update(TaskOrm).filter_by(id=str(task.id)).values(**params)
         self.session.execute(statement)

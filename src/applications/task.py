@@ -28,3 +28,10 @@ class TaskApplication:
     @transaction
     def delete(self, task_id: uuid.UUID) -> Task:
         return self.repo.delete(task_id)
+
+    @transaction
+    def complete(self, task_id: uuid.UUID) -> Task:
+        task = self.repo.get_one(task_id)
+        task.complete()
+        self.repo.update(task)
+        return task

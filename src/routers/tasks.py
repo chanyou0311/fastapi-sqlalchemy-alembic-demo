@@ -36,3 +36,11 @@ async def delete_task(
     app: TaskApplication = Depends(get_task_app),
 ):
     app.delete(id)
+
+
+@router.patch("/tasks/{id}")
+async def complete_task(
+    id: uuid.UUID,
+    app: TaskApplication = Depends(get_task_app),
+):
+    return app.complete(id)

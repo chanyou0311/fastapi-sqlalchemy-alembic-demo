@@ -32,6 +32,9 @@ class Task(BaseDomainModel):
         params |= {"id": uuid.uuid4()}
         return cls.parse_obj(params)
 
+    def complete(self) -> None:
+        self.is_completed = True
+
 
 class CreateTaskDto(BaseDtoModel):
     name: str
