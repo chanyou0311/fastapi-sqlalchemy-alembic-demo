@@ -19,9 +19,9 @@ def get_project_app(repo: ProjectRepository = Depends(get_project_repo)):
     return ProjectApplication()
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 
 
 @app.get("/projects/{id}", response_model=Project)
