@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .routers import projects
+from .routers import projects, tasks
 
 app = FastAPI()
 
@@ -11,3 +11,4 @@ async def health():
 
 
 app.include_router(projects.router)
+app.include_router(tasks.router)
