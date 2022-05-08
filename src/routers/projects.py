@@ -2,7 +2,7 @@ import uuid
 
 from fastapi import APIRouter, Depends, status
 
-from ..applications import ProjectApplication
+from ..applications.project import ProjectApplication
 from ..dependencies import get_project_app
 from ..models.project import CreateProjectDto, Project
 

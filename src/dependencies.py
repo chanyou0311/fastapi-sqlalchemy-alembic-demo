@@ -1,4 +1,4 @@
-from .applications import ProjectApplication
+from .applications.project import ProjectApplication
 
 
 def get_project_app():

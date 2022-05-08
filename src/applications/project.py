@@ -1,17 +1,9 @@
 import uuid
 
-
-from .config import SessionLocal
-from .models.project import Project, CreateProjectDto
-from .repositories import ProjectRepository
-
-
-def transaction(func):
-    def wrapper(self, *args, **kwargs):
-        with self.session.begin():
-            return func(self, *args, **kwargs)
-
-    return wrapper
+from ..config import SessionLocal
+from ..models.project import Project, CreateProjectDto
+from ..repositories import ProjectRepository
+from .base import transaction
 
 
 class ProjectApplication:
