@@ -10,6 +10,11 @@ class ProjectRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
+    def get_projects(self) -> list[Project]:
+        statement: Select = select(ProjectOrm)
+        project_orms = self.session.execute(statement).scalars().all()
+        return [Project.from_orm(project_orm) for project_orm in project_orms]
+
     def get_project(self, project_id: uuid.UUID) -> Project:
         statement: Select = select(ProjectOrm).filter_by(id=str(project_id))
         project_orm = self.session.execute(statement).scalar_one()

@@ -20,6 +20,10 @@ class ProjectApplication:
         self.repo = ProjectRepository(self.session)
 
     @transaction
+    def get_projects(self) -> list[Project]:
+        return self.repo.get_projects()
+
+    @transaction
     def get_project(self, project_id: uuid.UUID) -> Project:
         return self.repo.get_project(project_id)
 

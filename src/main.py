@@ -19,6 +19,11 @@ async def health():
     return {"status": "ok"}
 
 
+@app.get("/projects", response_model=list[Project])
+async def get_projects(app: ProjectApplication = Depends(get_project_app)):
+    return app.get_projects()
+
+
 @app.get("/projects/{id}", response_model=Project)
 async def get_project(
     id: uuid.UUID,
